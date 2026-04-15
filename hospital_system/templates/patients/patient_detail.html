@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Patient Details</h2>
+
+<div class="card p-3 mb-3">
+    <h4>{{ patient.name }}</h4>
+    <p>Email: {{ patient.email }}</p>
+    <p>Address: {{ patient.address }}</p>
+</div>
+
+<h4>Medical History</h4>
+<a href="{% url 'add_medical_record' patient.id %}"class="btn btn-primary mb-3">Add Medical Record</a>
+<a href="{% url 'patient_report' patient.id %}" class="btn btn-dark mb-3">Print Report</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Disease</th>
+            <th>Diagnosis</th>
+            <th>Prescription</th>
+            <th>Review Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        
+        <tr>
+            <td>{{ record.visit_date }}</td>
+            <td>{{ record.disease }}</td>
+            <td>{{ record.diagnosis }}</td>
+            <td>{{ record.prescription }}</td>
+            <td>{{ record.review_date }}</td>
+        </tr>
+        <h4 class="mt-4">Laboratory Results</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Test</th>
+                    <th>Status</th>
+                    <th>Result</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lab in labs %}
+                <tr>
+                    <td>{{ lab.test_type }}</td>
+                    <td>
+                        {% if lab.completed %}
+                        <span class="badge bg-success">Completed</span>
+                        {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ lab.result }}</td>
+                    <td>{{ lab.requested_date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No lab tests found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% empty %}
+        <tr>
+            <td colspan="5">No medical records found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

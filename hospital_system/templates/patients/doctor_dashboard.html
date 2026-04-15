@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Doctor Dashboard</h2>
+
+<h4>My Visits</h4>
+<table class="table table-bordered">
+    <tr>
+        <th>Patient</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+    {% for visit in visits %}
+    <tr>
+        <td>{{ visit.patient }}</td>
+        <td>{{ visit.status }}</td>
+        <td>{{ visit.visit_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4 class="mt-4">My Lab Requests</h4>
+<table class="table table-bordered">
+    <tr>
+        <th>Patient</th>
+        <th>Test</th>
+        <th>Status</th>
+    </tr>
+    {% for lab in labs %}
+    <tr>
+        <td>{{ lab.patient }}</td>
+        <td>{{ lab.test_type }}</td>
+        <td>
+            {% if lab.completed %}
+                Completed
+            {% else %}
+                Pending
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4 class="mt-4">My Diagnoses</h4>
+<table class="table table-bordered">
+    <tr>
+        <th>Patient</th>
+        <th>Disease</th>
+        <th>Date</th>
+    </tr>
+    {% for record in records %}
+    <tr>
+        <td>{{ record.patient }}</td>
+        <td>{{ record.disease }}</td>
+        <td>{{ record.visit_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

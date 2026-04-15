@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Laboratory Tests</h2>
+
+<a href="{% url 'add_lab' %}" class="btn btn-primary mb-3">
+    Add Lab Test
+</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Test</th>
+            <th>Doctor</th>
+            <th>Status</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lab in labs %}
+        <tr>
+            <td>{{ lab.patient }}</td>
+            <td>{{ lab.test_type }}</td>
+            <td>{{ lab.doctor }}</td>
+            <td>
+                {% if lab.completed %}
+                    Completed
+                {% else %}
+                    Pending
+                {% endif %}
+            </td>
+            <td>{{ lab.result }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

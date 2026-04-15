@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Admin Dashboard</h2>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Total Doctors</h5>
+                <p>{{doctors}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Total Patients</h5>
+                <p>{{patients}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Appointments</h5>
+                <p>{{appointments}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-4 p-4">
+                <h4>System Overviewer</h4>
+                <canvas id="myChart"></canvas>
+            </div>
+</div>
+<script>
+    const ctx = document.getElementById('myChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Patients', 'Doctors', 'Appointments'],
+            datasets: [{
+                label: 'Hospital Data',
+                data: [
+                    {{ patients }},
+                    {{ doctors }},
+                    {{ appointments }}
+                ],
+                borderWidth:1,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

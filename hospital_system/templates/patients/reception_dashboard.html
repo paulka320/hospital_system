@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Reception Dashboard</h2>
+
+<h4>Today's Visits</h4>
+
+<table class="table table-striped">
+    <tr>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Date</th>
+    </tr>
+
+    {% for visit in visits %}
+    <tr>
+        <td>{{ visit.patient }}</td>
+        <td>{{ visit.doctor }}</td>
+        <td>{{ visit.visit_date }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}
