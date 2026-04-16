@@ -32,6 +32,12 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'doctor_list' %}">🩺Doctors</a></li>
                     {% endif %}
                 {% endfor %}
+                {% for group in user.groups.all %}
+
+                {% if group.name == "Receptionist" %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'billing_dashboard' %}">Billing</a></li>
+                {% endif %}
+{% endfor %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'patient_list' %}">👤Patients</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'appointment_list' %}">👨‍⚕️Appointments</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'reception' %}">🧾Reception</a></li>

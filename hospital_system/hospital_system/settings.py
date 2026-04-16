@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'appointments',
     'dashboard',
     'rest_framework',
+    'billing',
 ]
 
 MIDDLEWARE = [

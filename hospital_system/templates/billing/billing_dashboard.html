@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Billing Dashboard</h2>
+
+<a href="{% url 'create_bill' %}" class="btn btn-primary">
+Create New Bill
+</a>
+
+<table class="table table-bordered mt-3">
+
+<tr>
+    <th>Bill ID</th>
+    <th>Patient</th>
+    <th>Total</th>
+    <th>Status</th>
+</tr>
+
+{% for bill in bills %}
+
+<tr>
+    <td>{{ bill.id }}</td>
+    <td>{{ bill.patient }}</td>
+    <td>{{ bill.total_amount }}</td>
+
+    <td>
+        {% if bill.paid %}
+            <span class="badge bg-success">
+                Paid
+            </span>
+        {% else %}
+            <span class="badge bg-danger">
+                Unpaid
+            </span>
+        {% endif %}
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}
