@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponseForbidden
 from core.utils import is_reception
 from .models import Bill
+from patients.models import Patient
 
 
 def billing_dashboard(request):
@@ -51,4 +52,13 @@ def create_bill(request):
         request,
         'billing/create_bill.html',
         {'patients': patients}
+    )
+
+def bill_receipt(request,bill_id):
+    bill=Bill.objects.all()
+    return render(
+        request,'billing/receipt.html',{
+            'bill':bill,
+            'items':items
+        }
     )

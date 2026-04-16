@@ -10,66 +10,178 @@
     <p>Address: {{ patient.address }}</p>
 </div>
 
+<!-- MEDICAL RECORDS -->
+
 <h4>Medical History</h4>
-<a href="{% url 'add_medical_record' patient.id %}"class="btn btn-primary mb-3">Add Medical Record</a>
-<a href="{% url 'patient_report' patient.id %}" class="btn btn-dark mb-3">Print Report</a>
+
+<a href="{% url 'add_medical_record' patient.id %}"
+   class="btn btn-primary mb-3">
+   Add Medical Record
+</a>
+
+<a href="{% url 'patient_report' patient.id %}"
+   class="btn btn-dark mb-3">
+   Print Report
+</a>
+
 <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Disease</th>
-            <th>Diagnosis</th>
-            <th>Prescription</th>
-            <th>Review Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for record in records %}
-        
-        <tr>
-            <td>{{ record.visit_date }}</td>
-            <td>{{ record.disease }}</td>
-            <td>{{ record.diagnosis }}</td>
-            <td>{{ record.prescription }}</td>
-            <td>{{ record.review_date }}</td>
-        </tr>
-        <h4 class="mt-4">Laboratory Results</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Test</th>
-                    <th>Status</th>
-                    <th>Result</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lab in labs %}
-                <tr>
-                    <td>{{ lab.test_type }}</td>
-                    <td>
-                        {% if lab.completed %}
-                        <span class="badge bg-success">Completed</span>
-                        {% else %}
-                        <span class="badge bg-warning">Pending</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ lab.result }}</td>
-                    <td>{{ lab.requested_date }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4">No lab tests found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% empty %}
-        <tr>
-            <td colspan="5">No medical records found</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+
+<thead>
+<tr>
+    <th>Date</th>
+    <th>Disease</th>
+    <th>Diagnosis</th>
+    <th>Prescription</th>
+    <th>Review Date</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for record in records %}
+
+<tr>
+    <td>{{ record.visit_date }}</td>
+    <td>{{ record.disease }}</td>
+    <td>{{ record.diagnosis }}</td>
+    <td>{{ record.prescription }}</td>
+    <td>{{ record.review_date }}</td>
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="5">
+No medical records found
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<!-- LABORATORY RESULTS -->
+
+<h4 class="mt-4">Laboratory Results</h4>
+
+<table class="table table-bordered">
+
+<thead>
+<tr>
+    <th>Test</th>
+    <th>Status</th>
+    <th>Result</th>
+    <th>Date</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for lab in labs %}
+
+<tr>
+
+<td>{{ lab.test_type }}</td>
+
+<td>
+{% if lab.completed %}
+<span class="badge bg-success">
+Completed
+</span>
+{% else %}
+<span class="badge bg-warning">
+Pending
+</span>
+{% endif %}
+</td>
+
+<td>{{ lab.result }}</td>
+
+<td>{{ lab.requested_date }}</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="4">
+No lab tests found
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<!-- BILLING SECTION -->
+
+<hr>
+
+<h4 class="mt-4">Billing</h4>
+
+<a href="{% url 'create_bill' %}"
+   class="btn btn-primary mb-3">
+   Create Bill
+</a>
+
+<table class="table table-bordered">
+
+<tr>
+    <th>Bill ID</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+
+{% for bill in bills %}
+
+<tr>
+
+<td>{{ bill.id }}</td>
+
+<td>{{ bill.created_at }}</td>
+
+<td>
+
+{% if bill.paid %}
+<span class="badge bg-success">
+Paid
+</span>
+{% else %}
+<span class="badge bg-danger">
+Unpaid
+</span>
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="{% url 'bill_receipt' bill.id %}"
+   class="btn btn-success btn-sm">
+
+Print Receipt
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="4">
+No bills found
+</td>
+</tr>
+
+{% endfor %}
+
 </table>
 
 {% endblock %}

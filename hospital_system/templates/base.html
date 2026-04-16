@@ -12,12 +12,14 @@
 <!-- Navbar -->
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
+        
+        <span class="navbar-brand">Hospital System</span>
         <div class="d-flex">
         <span class="text-white me-3">Welcome, {{user.username}}</span>
         <a href="{% url 'login' %}" class="btn btn-danger btn-sm">Logout</a>
     </div>
-        <span class="navbar-brand">Hospital System</span>
     </div>
+    
 </nav>
 
 <div class="container-fluid">

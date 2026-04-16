@@ -61,16 +61,20 @@ def api_patients(request):
     patients =Patient.objects.all()
     serializer =PatientSerializer(patients,many=True)
     return Response(serializer.data)
-
+from billing.models import Bill
 @login_required
 def patient_detail(request,id):
     patient = get_object_or_404(Patient,id=id)
     records=MedicalRecord.objects.filter(patient=patient)
     labs=Laboratory.objects.filter(patient=patient)
+    bills = Bill.objects.filter(
+        patient=patient
+    )
     return render(request,'patients/patient_detail.html',{
         'patient':patient,
         'records':records,
         'labs':labs,
+        'bills':bills,
     })
 
 @login_required
