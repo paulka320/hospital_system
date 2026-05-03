@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'dashboard',
     'rest_framework',
     'billing',
+    'notifications',
 ]
 
 MIDDLEWARE = [
