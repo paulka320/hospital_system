@@ -1,63 +1,501 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Hospital System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hospital Management System{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #0dcaf0;
+            --sidebar-bg: #f8f9fa;
+            --sidebar-border: #dee2e6;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            z-index: 1000;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h4 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .sidebar-brand p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 5px 0 0 0;
+            font-size: 0.85rem;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: white;
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left-color: white;
+            color: white;
+        }
+
+        .sidebar .nav-section-title {
+            color: rgba(255, 255, 255, 0.6);
+            padding: 15px 20px 5px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-left: 280px;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 280px;
+            z-index: 999;
+            height: 70px;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            height: 100%;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-info h6 {
+            margin: 0;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 70px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0 0 15px 0;
+        }
+
+        .breadcrumb-item {
+            color: #666;
+        }
+
+        .breadcrumb-item.active {
+            color: #999;
+        }
+
+        /* Page Title */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Cards */
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card.primary {
+            border-left-color: #0d6efd;
+        }
+
+        .stat-card.success {
+            border-left-color: #198754;
+        }
+
+        .stat-card.danger {
+            border-left-color: #dc3545;
+        }
+
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            color: #999;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* Tables */
+        .table-responsive {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead {
+            background-color: #f8f9fa;
+        }
+
+        .table th {
+            border: none;
+            font-weight: 600;
+            color: #666;
+            padding: 15px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            border: none;
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fafbfc;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 6px;
+            font-weight: 600;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0b5ed7;
+        }
+
+        /* Forms */
+        .form-control, .form-select {
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+            }
+
+            .top-navbar {
+                margin-left: 0;
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
 </head>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <body>
-    
-
-<!-- Navbar -->
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        
-        <span class="navbar-brand">Hospital System</span>
-        <div class="d-flex">
-        <span class="text-white me-3">Welcome, {{user.username}}</span>
-        <a href="{% url 'login' %}" class="btn btn-danger btn-sm">Logout</a>
-    </div>
-    </div>
-    
-</nav>
-
-<div class="container-fluid">
-    <div class="row">
-
-        <!-- Sidebar -->
-        <div class="col-2 bg-light vh-100">
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">🏠Dashboard</a></li>
-                {% for group in user.groups.all %}
-                    {% if group.name == "Doctor" %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'doctor_list' %}">🩺Doctors</a></li>
-                    {% endif %}
-                {% endfor %}
-                
-                <li class="nav-item"><a class="nav-link" href="{% url 'patient_list' %}">👤Patients</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'appointment_list' %}">👨‍⚕️Appointments</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'reception' %}">🧾Reception</a></li>
-                <li class="nav-item"><a class="nav-link"href="{% url 'lab_list' %}">🧪Laboratory</a></li>
-                {% if user.is_authenticated and user.doctor %}
-                <li class="nav-item"><a class="nav-link"href="{% url 'doctor_dashboard' %}">Doctor Dashboard</a></li>
-                {% endif %}
-                {% for group in user.groups.all %}
-                    {% if group.name == "Receptionist" %}
-                <li><a class="nav-link"href="{% url 'reception_dashboard' %}">Reception Dashboard</a></li>
-                     {% endif %}
-                {% endfor %}
-            </ul>
+    {% if user.is_authenticated %}
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h4><i class="bi bi-hospital"></i> HMS</h4>
+            <p>Healthcare System</p>
         </div>
 
-        <!-- Main Content -->
-        <div class="col-10 p-4">
-            {% block content %}
-            {% endblock %}
-        </div>
+        <nav class="nav flex-column">
+            <!-- Main Navigation -->
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                <i class="bi bi-house-door"></i> <span class="ms-2">Dashboard</span>
+            </a>
 
+            <!-- Admin Links -->
+            {% if user.profile.is_admin %}
+            <div class="nav-section-title">Administration</div>
+            <a class="nav-link" href="{% url 'admin:index' %}">
+                <i class="bi bi-gear"></i> <span class="ms-2">Admin Panel</span>
+            </a>
+            <a class="nav-link" href="{% url 'admin:auth_user_changelist' %}">
+                <i class="bi bi-people"></i> <span class="ms-2">Users Management</span>
+            </a>
+            {% endif %}
+
+            <!-- Doctor Links -->
+            {% if user.profile.is_doctor or user.profile.is_admin %}
+            <div class="nav-section-title">Medical</div>
+            <a class="nav-link" href="{% url 'doctor_list' %}">
+                <i class="bi bi-stethoscope"></i> <span class="ms-2">Doctors</span>
+            </a>
+            {% if user.profile.is_doctor %}
+            <a class="nav-link" href="{% url 'doctor_dashboard' %}">
+                <i class="bi bi-graph-up"></i> <span class="ms-2">My Dashboard</span>
+            </a>
+            {% endif %}
+            {% endif %}
+
+            <!-- Patient Links -->
+            {% if user.profile.is_admin or user.profile.is_doctor or user.profile.is_receptionist %}
+            <a class="nav-link" href="{% url 'patient_list' %}">
+                <i class="bi bi-file-person"></i> <span class="ms-2">Patients</span>
+            </a>
+            {% endif %}
+
+            <!-- Appointment Links -->
+            {% if user.profile.is_admin or user.profile.is_receptionist or user.profile.is_doctor %}
+            <a class="nav-link" href="{% url 'appointment_list' %}">
+                <i class="bi bi-calendar-check"></i> <span class="ms-2">Appointments</span>
+            </a>
+            {% endif %}
+
+            <!-- Receptionist Links -->
+            {% if user.profile.is_receptionist %}
+            <div class="nav-section-title">Reception</div>
+            <a class="nav-link" href="{% url 'reception' %}">
+                <i class="bi bi-person-check"></i> <span class="ms-2">Reception</span>
+            </a>
+            <a class="nav-link" href="{% url 'reception_dashboard' %}">
+                <i class="bi bi-speedometer2"></i> <span class="ms-2">Reception Dashboard</span>
+            </a>
+            {% endif %}
+
+            <!-- Laboratory Links -->
+            {% if user.profile.is_lab_technician or user.profile.is_admin %}
+            <div class="nav-section-title">Laboratory</div>
+            <a class="nav-link" href="{% url 'lab_list' %}">
+                <i class="bi bi-flask"></i> <span class="ms-2">Lab Tests</span>
+            </a>
+            {% endif %}
+
+            <!-- Billing Links -->
+            {% if user.profile.is_accountant or user.profile.is_admin %}
+            <div class="nav-section-title">Billing</div>
+            <a class="nav-link" href="#"><i class="bi bi-receipt"></i> <span class="ms-2">Invoices</span></a>
+            <a class="nav-link" href="#"><i class="bi bi-credit-card"></i> <span class="ms-2">Payments</span></a>
+            {% endif %}
+        </nav>
     </div>
-</div>
 
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="navbar-content">
+            <div></div>
+            <div class="navbar-user">
+                <div class="user-avatar">
+                    {{ user.username|first|upper }}
+                </div>
+                <div class="user-info">
+                    <h6>{{ user.profile.display_name }}</h6>
+                    <p>{{ user.profile.get_role_display }}</p>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> My Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% if messages %}
+        <div class="alert alert-dismissible fade show" role="alert" id="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block breadcrumb %}{% endblock %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    {% else %}
+    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        {% block content %}{% endblock %}
+    </div>
+    {% endif %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

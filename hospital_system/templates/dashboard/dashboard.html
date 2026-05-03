@@ -1,64 +1,254 @@
 {% extends 'base.html' %}
 
+{% block title %}Dashboard - Hospital Management System{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+</nav>
+{% endblock %}
+
 {% block content %}
-
-<h2>Admin Dashboard</h2>
-
-<div class="row mt-4">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h5>Total Doctors</h5>
-                <p>{{doctors}}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h5>Total Patients</h5>
-                <p>{{patients}}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h5>Appointments</h5>
-                <p>{{appointments}}</p>
-            </div>
-        </div>
-    </div>
-    <div class="card mt-4 p-4">
-                <h4>System Overviewer</h4>
-                <canvas id="myChart"></canvas>
-            </div>
+<div class="page-header mb-4">
+    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    <small class="text-muted">Welcome back, {{ user.profile.display_name }}!</small>
 </div>
+
+<!-- Key Statistics -->
+<div class="row mb-4">
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="stat-card primary">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Total Patients</div>
+                    <div class="stat-value">{{ total_patients|default:0 }}</div>
+                </div>
+                <div class="stat-icon text-primary">
+                    <i class="bi bi-file-person"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="stat-card success">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Active Doctors</div>
+                    <div class="stat-value">{{ total_doctors|default:0 }}</div>
+                </div>
+                <div class="stat-icon text-success">
+                    <i class="bi bi-stethoscope"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="stat-card danger">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Total Appointments</div>
+                    <div class="stat-value">{{ total_appointments|default:0 }}</div>
+                </div>
+                <div class="stat-icon text-danger">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="stat-card warning">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Pending Tasks</div>
+                    <div class="stat-value">{{ pending_tasks|default:0 }}</div>
+                </div>
+                <div class="stat-icon text-warning">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row mb-4">
+    <div class="col-lg-8 mb-3">
+        <div class="card" style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-4">
+                    <i class="bi bi-graph-up"></i> System Overview
+                </h5>
+                <canvas id="systemChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-3">
+        <div class="card" style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-4">
+                    <i class="bi bi-pie-chart"></i> User Distribution
+                </h5>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card" style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h5>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'patient_add' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-plus-circle"></i> Add Patient
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'appointment_list' %}" class="btn btn-info w-100">
+                            <i class="bi bi-calendar-plus"></i> New Appointment
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'admin:index' %}" class="btn btn-secondary w-100">
+                            <i class="bi bi-gear"></i> Admin Panel
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-clock-history"></i> System Stats
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Count</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="bi bi-file-person"></i> Total Patients</td>
+                                <td><strong>{{ total_patients|default:0 }}</strong></td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-stethoscope"></i> Total Doctors</td>
+                                <td><strong>{{ total_doctors|default:0 }}</strong></td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-calendar-check"></i> Total Appointments</td>
+                                <td><strong>{{ total_appointments|default:0 }}</strong></td>
+                                <td><span class="badge bg-info">Scheduled</span></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-exclamation-circle"></i> Pending Tasks</td>
+                                <td><strong>{{ pending_tasks|default:0 }}</strong></td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    const ctx = document.getElementById('myChart');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Patients', 'Doctors', 'Appointments'],
-            datasets: [{
-                label: 'Hospital Data',
-                data: [
-                    {{ patients }},
-                    {{ doctors }},
-                    {{ appointments }}
-                ],
-                borderWidth:1,
-            }]
+// System Chart
+const systemCtx = document.getElementById('systemChart').getContext('2d');
+new Chart(systemCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Patients', 'Doctors', 'Appointments'],
+        datasets: [{
+            label: 'Total Count',
+            data: [{{ total_patients|default:0 }}, {{ total_doctors|default:0 }}, {{ total_appointments|default:0 }}],
+            backgroundColor: [
+                '#0d6efd',
+                '#198754',
+                '#dc3545'
+            ],
+            borderRadius: 5,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
         },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
                 }
             }
         }
-    });
+    }
+});
+
+// Pie Chart
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+new Chart(pieCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Patients', 'Doctors', 'Appointments'],
+        datasets: [{
+            data: [{{ total_patients|default:0 }}, {{ total_doctors|default:0 }}, {{ total_appointments|default:0 }}],
+            backgroundColor: [
+                '#0d6efd',
+                '#198754',
+                '#dc3545'
+            ],
+            borderColor: '#fff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
 </script>
 
 {% endblock %}
